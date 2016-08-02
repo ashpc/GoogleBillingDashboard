@@ -22,9 +22,9 @@ def create_table():
 
 
 '''
-    Get the list of distinct projects from usage table
+    Get the list of distinct projects from billing table
 
-    SELECT  DISTINCT(project_id) FROM reporting.usage;
+    SELECT  DISTINCT(project_id) FROM reporting.billing;
 '''
 
 
@@ -48,6 +48,18 @@ def get_cost_centers(unique):
         center_list = db_session.query(Project).all()
     return center_list
 
+
+'''
+    Get list of distinct project ids from project table
+
+    SELECT DISTINCT(project_id) FROM reporting.project;
+'''
+
+def get_project_ids():
+    project_list = db_session.query(Project.project_id).distinct()
+    project_ids = (item[0] for item in project_list)
+
+    return list(project_ids)
 
 '''
     Get the list of projects already in projects table
@@ -767,4 +779,3 @@ def set_global_cost_center_list():
                      director_email='', contact_name='', contact_email='', alert_amount=''))
 
     return cost_center_list
-

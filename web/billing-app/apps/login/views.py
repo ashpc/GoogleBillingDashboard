@@ -3,7 +3,7 @@ import json
 import logging
 from flask import Blueprint, request
 from flask.templating import render_template
-from apps.config.apps_config import QUOTA_VIEW
+from apps.config.apps_config import QUOTA_VIEW, USAGE_VIEW
 
 mod = Blueprint('login', __name__, url_prefix='/')
 
@@ -11,7 +11,7 @@ mod = Blueprint('login', __name__, url_prefix='/')
 @mod.route('/')
 def index():
     url = 'index.html'
-    return render_template(url, quota_flag=QUOTA_VIEW, title="Cloud Admin Tool")
+    return render_template(url, quota_flag=QUOTA_VIEW, usage_flag=USAGE_VIEW, title="Cloud Admin Tool")
 
 
 '''
@@ -70,5 +70,3 @@ def logout(username):
                     status=200,
                     mimetype="application/json")
     return resp
-
-

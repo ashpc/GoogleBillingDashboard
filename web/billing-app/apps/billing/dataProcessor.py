@@ -18,6 +18,7 @@ from apps.config.apps_config import BUCKET_NAME, ARCHIVE_BUCKET_NAME, log, db_se
 import datetime
 from apps.billing.models import Billing, Project
 from apps.usage.usageData import data_processor as usage_processor
+from apps.instance.instanceData import data_processor as instance_processor
 from apscheduler.schedulers.background import BackgroundScheduler
 
 import os
@@ -34,6 +35,7 @@ def run_scheduler():
     scheduler.print_jobs()
     scheduler.add_job(data_processor, id='data_processor', args=['now'])
     scheduler.add_job(usage_processor, id='usage_data_processor', args=['now'])
+    scheduler.add_job(instance_processor, id='instance_data_processor', args=['now'])
     log.info('------ Jobs List -----')
     scheduler.print_jobs()
     return scheduler
@@ -50,6 +52,9 @@ def set_scheduler(hour, min):
     scheduler.add_job(usage_processor, 'cron', hour=get_time(hour, min)['hour'],
                       minute=get_time(hour, min)['mins'], second=get_time(hour, min)['sec'],
                       id='usage_data_processor', args=['cron'])
+    scheduler.add_job(instance_processor, 'interval',
+                      minutes=5,
+                      id='instance_data_processor', args=['cron'])
     log.info('------ SCHEDULER INIT -----')
     log.info('------ Jobs List -----')
     scheduler.print_jobs()
