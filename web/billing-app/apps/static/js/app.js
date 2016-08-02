@@ -56,7 +56,21 @@ if (document.URL.indexOf('billing') != -1) {
     'usageService'
   ]);
 
-} else {
+} else if (document.URL.indexOf('instance') != -1 ){
+  var cuApp = angular.module('cuApp', [
+    'ngRoute',
+    'ngCookies',
+    'ui.bootstrap',
+    'angular.filter',
+    'cuControllers',
+    'loginService',
+    'instanceController',
+    'instanceService',
+    'usageService',
+    "isteven-multi-select"
+  ]);
+}
+else {
   var cuApp = angular.module('cuApp', [
     'ngRoute',
     'ngCookies',

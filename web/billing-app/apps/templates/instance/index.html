@@ -1,0 +1,17 @@
+{% extends "defaultTemplate.html" %}
+
+
+{% block customcss %}
+  <link rel="stylesheet" href="/static/css/isteven-multi-select.css">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid main" >
+  <div ng-include="'/static/partials/instance/instance.html'"></div>
+</div>
+{% endblock %}
+
+{% block customjs %}
+  <script src="/static/assets/js/instance.min.js"></script>
+  <script src="/static/js/isteven-multi-select.js"></script>
+{% endblock %}

@@ -128,6 +128,7 @@ def insert_instance_data(instance_list,zone):
     try:
 
         for obj in instance_list:
+            log.info("--------- Processing metadata for instanceID: {0} -------------------------".format(obj['id']))
             instance_id = obj['id']
             project_name = obj['zone'].split('/')[6]
             insert_data(instance_id, 'project', project_name)
@@ -138,7 +139,7 @@ def insert_instance_data(instance_list,zone):
             insert_data(instance_id, 'name', obj['name'])
             insert_data(instance_id, 'machineType', obj['machineType'])
 
-            if 'tags' in  obj and 'items' in  obj['tags']['items']:
+            if 'tags' in  obj and 'items' in  obj['tags']:
                 for tag in obj['tags']['items']:
                     insert_data(instance_id, 'tags.items',tag)
 
@@ -184,7 +185,7 @@ def insert_instance_data(instance_list,zone):
 
 def insert_data(instanceId, key, value):
     done = False
-    log.info('---- starting to add info to DB ----')
+    log.info('---- starting to add info to DB {0}, {1}, {2} ----'.format(instanceId, key, value))
     try:
         log.info('--------------------- ADDED INFO TO DB ---------------------')
         instance = Instance(instanceId=instanceId, key=key, value=value)
@@ -193,9 +194,9 @@ def insert_data(instanceId, key, value):
         done = True
     except IntegrityError as e:
         log.info('---- DATA ALREADY IN DB --- UPDATE  ------')
-        # log.info('{0}<---->{1}<----->{2}<------>{3}'.format(instanceId=instanceId, key=key, value=value))
+        # log.info('instanceId = {0}<----> key = {1}<-----> value = {2}'.format(instanceId, key, value))
         db_session.rollback()
-        instance = Instance.query.filter_by( instanceId=instanceId, key=key, value=value).first()
+        instance = Instance.query.filter_by( instanceId=instanceId, key=key).first()
         instance.value = value
         db_session.commit()
 

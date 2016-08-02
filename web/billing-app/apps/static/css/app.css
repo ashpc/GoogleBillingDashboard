@@ -24,6 +24,15 @@ select option {
     text-transform: capitalize;
 }
 
+.greeniconcolor {
+  color:green;
+}
+
+ .greyiconcolor {
+   color:grey;
+ }
+
+
 /* Audit
 @media (min-width: 768px) {
     th, td {

@@ -9,7 +9,7 @@ from apps.billing.models import Billing, Project
 from apps.usage.models import Usage
 from apps.config.apps_config import db_session, log, USAGE_VIEW,QUOTA_VIEW
 from apps.usage.usageData import data_processor
-from flask import Blueprint, request
+from flask import Blueprint, request, redirect
 from flask.wrappers import Response
 from flask.templating import render_template
 logging.basicConfig(level=logging.DEBUG)
@@ -21,9 +21,15 @@ mod = Blueprint('usage', __name__, url_prefix='/usage')
 @mod.route('/')
 @app.route('/index')
 def index():
+    # if USAGE_VIEW == 'True':
+    #     url = 'usage/index.html'
+    #     return render_template(url,quota_flag=QUOTA_VIEW, usage_flag=USAGE_VIEW, title="Cloud Admin Tool")
+    #
+    # return redirect('/')
+    # return render_template('/', quota_flag=QUOTA_VIEW, usage_flag=USAGE_VIEW, title="Cloud Admin Tool")
+
     url = 'usage/index.html'
     return render_template(url,quota_flag=QUOTA_VIEW, usage_flag=USAGE_VIEW, title="Cloud Admin Tool")
-
 
 @mod.route('/api/dbdump')
 def getAllUsage():
@@ -108,4 +114,3 @@ def loadData():
                     status=200,
                     mimetype="application/json")
     return resp
-

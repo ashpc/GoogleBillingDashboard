@@ -36,6 +36,10 @@ module.exports = function (grunt) {
             usage_js: {
                 src: ['<%= static_js_dir %>/services/usage/*','<%= static_js_dir %>/controllers/usage/*'],
                 dest: '<%= assets_js_dir %>/usage.js'
+            },
+            instance_js: {
+                src: ['<%= static_js_dir %>/services/instance/*','<%= static_js_dir %>/controllers/instance/*', '<%= static_js_dir %>/services/usage/*'],
+                dest: '<%= assets_js_dir %>/instance.js'
             }
 
 
@@ -50,7 +54,8 @@ module.exports = function (grunt) {
                     'apps/static/assets/js/menu_login.min.js': ['<%= concat.menu_login_js.dest %>'],
                     'apps/static/assets/js/billing.min.js': ['<%= concat.billing_js.dest %>'],
                     'apps/static/assets/js/quota.min.js': ['<%= concat.quota_js.dest %>'],
-                    'apps/static/assets/js/usage.min.js': ['<%= concat.usage_js.dest %>']
+                    'apps/static/assets/js/usage.min.js': ['<%= concat.usage_js.dest %>'],
+                    'apps/static/assets/js/instance.min.js': ['<%= concat.instance_js.dest %>']
                 }
             }
         },

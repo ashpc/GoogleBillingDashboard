@@ -1,0 +1,224 @@
+<div class="col-md-12" ng-controller="instanceController">
+
+  <div class="row-fluid">
+    <div class="panel panel-default">
+      <h2 class="text-center">
+        <span class="fa-stack fa-lg">
+          <i class="fa fa-square-o fa-stack-2x text-success"></i>
+          <i class="fa fa-database fa-stack-1x text-success"></i>
+        </span>
+          Instance Data
+      </h2>
+
+      <hr class="clear">
+
+      <div class="panel-body filters">
+
+          <div class="col-md-1">
+            <label class="text-right" for="dropdownYear" style="padding: 5px;">Year</label>
+            <select class="form-control" ng-model="body.year" id="dropdownYear">
+              <option ng-repeat="y in yearsList" value="{{y}}">
+                {{y}}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-1">
+            <label class="text-right" for="dropdownMonth" style="padding: 5px;">Month</label>
+            <select class="form-control" ng-model="body.month" id="dropdownMonth">
+              <option ng-repeat="m in monthsList" value="{{m.num}}">
+                {{m.month}}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-2">
+            <label class="text-right" for="dropdownProject" style="padding: 5px;">Project</label>
+            <select class="form-control" ng-model="body.project" id="dropdownProject">
+              <option ng-repeat="p in projectsList" value="{{p}}">
+                {{p}}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-2">
+            <label class="text-right" for="dropdownProject" style="padding: 5px;">Machine Type</label>
+            <select class="form-control" ng-model="body.machine_type" id="dropdownMachineType">
+              <option ng-repeat="mt in machine_types" value="{{mt}}">
+                {{mt}}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-3">
+            <label class="text-right" for="dropdownTags" style="padding: 5px">Tags</label>
+            <div
+            isteven-multi-select
+            input-model="tags"
+            output-model="body.tags"
+            button-label="name"
+            item-label="name"
+            tick-property="ticked"
+            id="dropdownTags"
+            >
+            </div>
+          </div>
+          <div class="btn group">
+            <button type="button" class="btn btn-warning" style="margin-top:35px;" ng-click="getInstanceTable()" ng-disabled="loading">Filter Results</button>
+            <button type="button" class="btn btn-warning" style="margin-top:35px;" ng-click="reset()" ng-disabled="loading">Reset Results</button>
+        </div>
+
+      </div>
+
+      <hr class="clear">
+      <div ng-include="'/static/partials/loading.html'"></div>
+
+      <div class="panel-body" ng-hide="loading">
+
+        <table class="table table-hover">
+          <thead>
+            <th></th>
+            <th>
+              <a class="sort" href="#" ng-click="sortType = 'name'; sortReverse = !sortReverse">
+                Name
+                <span class="fa fa-caret-down" ng-show="sortType == 'name' && !sortReverse"></span>
+                <span class="fa fa-caret-up" ng-show="sortType == 'name' && sortReverse"></span>
+              </a>
+            </th>
+            <th>
+              <a class="sort" href="#" ng-click="sortType = 'project'; sortReverse = !sortReverse">
+                Project
+                <span class="fa fa-caret-down" ng-show="sortType == 'project' && !sortReverse"></span>
+                <span class="fa fa-caret-up" ng-show="sortType == 'project' && sortReverse"></span>
+              </a>
+            </th>
+            <th>
+              <a class="sort" href="#" ng-click="sortType = 'zone'; sortReverse = !sortReverse">
+                Zone
+                <span class="fa fa-caret-down" ng-show="sortType == 'zone' && !sortReverse"></span>
+                <span class="fa fa-caret-up" ng-show="sortType == 'zone' && sortReverse"></span>
+              </a>
+            </th>
+            <th>
+              <a class="sort" href="#" ng-click="sortType = 'machineType'; sortReverse = !sortReverse">
+                Machine Type
+                <span class="fa fa-caret-down" ng-show="sortType == 'machineType' && !sortReverse"></span>
+                <span class="fa fa-caret-up" ng-show="sortType == 'machineType' && sortReverse"></span>
+              </a>
+            </th>
+            <th>Internal IP</th>
+            <th>External IP</th>
+            <th>Tags</th>
+            <th  ng-click="openCloseAll()" data-toggle="tooltip" data-placement="top" title="Expand or hide all">
+              <i class="pull-right fa greyiconcolor"  ng-class="{'fa-angle-down': allOpen, 'fa-angle-up': !allOpen}"></i>
+            </th>
+          </thead>
+          <tbody ng-repeat="i in instanceTable | orderBy:sortType:sortReverse">
+            <tr data-toggle="collapse" data-target="#{{i.instanceId}}" ng-click="i.open = !i.open">
+              <td><i ng-class="{'fa fa-check-circle greeniconcolor': i.status == 'RUNNING', 'fa fa-stop-circle greyiconcolor': i.status == 'TERMINATED'}"></i></td>
+              <td>{{i.name}}</td>
+              <td>{{i.project}}</td>
+              <td>{{i.zone}}</td>
+              <td>{{i.machineType}}</td>
+              <td>
+                <div ng-if="i['networkInterfaces.networkIP']">{{i['networkInterfaces.networkIP']}}</div>
+                <div ng-if="!i['networkInterfaces.networkIP']" class="greyiconcolor">None</div>
+              </td>
+              <td>
+                <div ng-if="i['networkInterfaces.accessconfig.natIP']">
+                  <a ng-href="http://{{i['networkInterfaces.accessconfig.natIP']}}">{{i['networkInterfaces.accessconfig.natIP']}}</a></div>
+                <div ng-if="!i['networkInterfaces.accessconfig.natIP']" class="greyiconcolor">None</div>
+              </td>
+              <td><span  ng-repeat="t in i['tags.items']">{{t}} </span></td>
+              <td><i class="pull-right fa greyiconcolor"  ng-class="{'fa-angle-down': i.open, 'fa-angle-up': !i.open}" ></i></td>
+            </tr>
+
+            <!-- expanded table row information -->
+            <tr ng-hide="!i.open">
+              <td colspan="9">
+                <div id="{{i.instanceId}}">
+                  <div class="col-md-3">
+                    <label>Creation Time</label>
+                    <div>{{i.creationTimestamp | date : 'medium'}}</div>
+                    <br />
+                    <div ng-if="i['tags.items']" >
+                      <label>Tags</label>
+                      <span class="row">
+                        <div ng-repeat="t in i['tags.items']">
+                          {{t}}
+                        </div>
+                      </span>
+                    </div>
+                    <br />
+
+                    <label>Machine Type</label>
+                    <div>{{i.machineType}}</div>
+                    <br />
+
+                    <label>Zone</label>
+                    <div>{{i.zone}}</div>
+                    <br />
+
+                    <div>
+                      <label>External IP</label>
+                      <div ng-if="i['networkInterfaces.accessconfig.natIP']"><a ng-href="http://{{i['networkInterfaces.accessconfig.natIP']}}">{{i['networkInterfaces.accessconfig.natIP']}}</a></div>
+                      <div ng-if="!i['networkInterfaces.accessconfig.natIP']" class="greyiconcolor">None</div>
+                    </div>
+                    <br />
+
+                    <div>
+                      <label>Internal IP</label>
+                      <div ng-if="i['networkInterfaces.networkIP']">{{i['networkInterfaces.networkIP']}}</div>
+                      <div ng-if="!i['networkInterfaces.networkIP']" class="greyiconcolor">None</div>
+                    </div>
+                    <br />
+
+                  </div>
+                  <div class="col-md-9">
+
+                    <label ng-if="i.disks" for="disksTable">Disks</label>
+                    <table class="table table-striped" id="disksTable">
+
+                        <tr ng-repeat="disk in i.disks">
+                          <td><b><small>
+                            {{disk.key}}
+                          </small></b></td>
+                          <td><small>{{disk.value}}</small></td>
+                        </tr>
+
+                      </table>
+
+                    <label ng-if="i.metadata" for="metadataTable">Custom Metadata</label>
+                    <table class="table table-striped" id="metadataTable">
+
+                        <tr ng-repeat="meta in i.metadata">
+                          <td><b><small>
+                            {{meta.key}}
+                          </small></b></td>
+                          <td><small>{{meta.value}}</small></td>
+                        </tr>
+
+                      </table>
+
+                  </div>
+
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+      <!-- panel-body table -->
+
+      <div class="clear panel-body bg-info text-center" ng-hide="instanceTable.length || loading">
+          No data available, try again later.
+      </div>
+
+    </div>
+    <!-- panel -->
+
+  </div>
+  <!-- end of row-->
+
+</div>
