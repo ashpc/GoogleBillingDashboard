@@ -21,15 +21,12 @@ mod = Blueprint('usage', __name__, url_prefix='/usage')
 @mod.route('/')
 @app.route('/index')
 def index():
-    # if USAGE_VIEW == 'True':
-    #     url = 'usage/index.html'
-    #     return render_template(url,quota_flag=QUOTA_VIEW, usage_flag=USAGE_VIEW, title="Cloud Admin Tool")
-    #
-    # return redirect('/')
-    # return render_template('/', quota_flag=QUOTA_VIEW, usage_flag=USAGE_VIEW, title="Cloud Admin Tool")
+    if USAGE_VIEW == 'True':
+        url = 'usage/index.html'
+        return render_template(url,quota_flag=QUOTA_VIEW, usage_flag=USAGE_VIEW, title="Cloud Admin Tool")
 
-    url = 'usage/index.html'
-    return render_template(url,quota_flag=QUOTA_VIEW, usage_flag=USAGE_VIEW, title="Cloud Admin Tool")
+    return redirect('/')
+    
 
 @mod.route('/api/dbdump')
 def getAllUsage():

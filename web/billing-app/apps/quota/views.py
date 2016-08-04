@@ -6,10 +6,10 @@ __email__ = "ASHWINI_CHANDRASEKAR@homedepot.com"
 __version__ = "1.0"
 __doc__ = "Billing View API/HTML layer"
 
-from flask import Blueprint, request
+from flask import Blueprint, request, redirect
 from flask.templating import render_template
 from flask.wrappers import Response
-from apps.config.apps_config import log, QUOTA_VIEW
+from apps.config.apps_config import log, QUOTA_VIEW, USAGE_VIEW
 
 import json
 
@@ -22,9 +22,12 @@ mod = Blueprint('quota', __name__, url_prefix='/quota')
 # route handles for /admin and /admin/page
 @mod.route('/')
 def quota():
-    url = 'quota/index.html'
-    return render_template(url, quota_flag=QUOTA_VIEW, title="Cloud Admin Tool")
 
+    if QUOTA_VIEW == "True":
+        url = 'quota/index.html'
+        return render_template(url, quota_flag=QUOTA_VIEW, usage_flag=USAGE_VIEW, title="Cloud Admin Tool")
+
+    return redirect('/')
 
 '''
 

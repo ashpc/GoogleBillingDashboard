@@ -35,7 +35,6 @@ def get_instance_metadata():
 @mod.route('/api/instancetable', methods=['POST'])
 def load_instance_table():
     body = request.get_json()
-    log.info("------- body: {0} -------".format(body))
     machine_type = body.get('machine_type', None)
     tags = body.get('tags', None)
     project = body.get('project', None)
@@ -48,13 +47,12 @@ def load_instance_table():
 
     for x in data:
         del x['_sa_instance_state']
+        if x['key'] == 'machineType':
+            x['value'] = x['value'].split('/')[-1]
+
 
     instance_obj_list = data
     instance_obj_list = build_objs(data)
-
-    for x in instance_obj_list:
-        if 'machineType' in x:
-            x['machineType'] = x['machineType'].split('/')[-1]
 
     # project = project name
     if project is not None:
@@ -126,9 +124,8 @@ def build_objs(data):
                 instances_obj[row['instanceId']]['tags.items'] = []
             instances_obj[row['instanceId']]['tags.items'].append(row['value'])
         elif 'metadata' in row['key']:
-            if 'metadata' not in instances_obj[row['instanceId']]:
-                instances_obj[row['instanceId']]['metadata'] = []
-            instances_obj[row['instanceId']]['metadata'].append({'key': row['key'].replace('metadata.', ''),'value':row['value']})
+            # do not return metadata
+            continue
         elif 'disks' in row['key']:
             if 'disks' not in instances_obj[row['instanceId']]:
                 instances_obj[row['instanceId']]['disks'] = []
